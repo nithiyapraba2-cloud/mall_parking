@@ -5,6 +5,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { VehicleTypesModule } from './vehicle-types/vehicle-types.module.js';
 import { VehiclesModule } from './vehicles/vehicles.module.js';
+import { ParkingTransactionsModule } from './parking-transactions/parking-transactions.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { VehiclesModule } from './vehicles/vehicles.module.js';
     }),
     VehicleTypesModule,
     VehiclesModule,
+    ParkingTransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
