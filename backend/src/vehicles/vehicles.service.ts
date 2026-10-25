@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -31,6 +32,17 @@ export class VehiclesService {
     }
   }
 
+  // Used by check-in: return the vehicle if it exists, otherwise register it
+  async findOrCreate(dto: CreateVehicleDto) {
+    const existing = await this.vehicleRepo.findOneBy({
+      plateNumber: dto.plateNumber,
+    });
+    if (existing) {
+      return existing;
+    }
+    return this.create(dto);
+  }
+
   findAll() {
     return this.vehicleRepo.find({
       relations: { vehicleType: true },
@@ -50,6 +62,10 @@ export class VehiclesService {
   }
 
   async update(id: number, dto: UpdateVehicleDto) {
+    if (Object.values(dto).every((value) => value === undefined)) {
+      throw new BadRequestException('Send at least one field to update');
+    }
+
     const vehicle = await this.findOne(id);
 
     if (dto.vehicleTypeId && dto.vehicleTypeId !== vehicle.vehicleTypeId) {

@@ -9,5 +9,6 @@ import { VehicleTypesModule } from '../vehicle-types/vehicle-types.module.js';
   imports: [TypeOrmModule.forFeature([Vehicle]), VehicleTypesModule],
   controllers: [VehiclesController],
   providers: [VehiclesService],
+  exports: [VehiclesService],
 })
 export class VehiclesModule {}
