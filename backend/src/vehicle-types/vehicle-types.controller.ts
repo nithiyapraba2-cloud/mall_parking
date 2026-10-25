@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { VehicleTypesService } from './vehicle-types.service.js';
 import { CreateVehicleTypeDto } from './dto/create-vehicle-type.dto.js';
 import { UpdateVehicleTypeDto } from './dto/update-vehicle-type.dto.js';
@@ -18,17 +27,20 @@ export class VehicleTypesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.vehicleTypesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.vehicleTypesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVehicleTypeDto: UpdateVehicleTypeDto) {
-    return this.vehicleTypesService.update(+id, updateVehicleTypeDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateVehicleTypeDto: UpdateVehicleTypeDto,
+  ) {
+    return this.vehicleTypesService.update(id, updateVehicleTypeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.vehicleTypesService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.vehicleTypesService.remove(id);
   }
 }
