@@ -7,9 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { ParkingTransactionsService } from './parking-transactions.service.js';
 import { CreateParkingTransactionDto } from './dto/create-parking-transaction.dto.js';
+import { TransactionStatus } from './entities/parking-transaction.entity.js';
 
 @Controller('parking-transactions')
 export class ParkingTransactionsController {
@@ -28,10 +31,12 @@ export class ParkingTransactionsController {
   checkOut(@Param('id', ParseIntPipe) id: number) {
     return this.parkingTransactionsService.checkOut(id);
   }
-
   @Get()
-  findAll() {
-    return this.parkingTransactionsService.findAll();
+  findAll(
+    @Query('status', new ParseEnumPipe(TransactionStatus, { optional: true }))
+    status?: TransactionStatus,
+  ) {
+    return this.parkingTransactionsService.findAll(status);
   }
 
   @Get(':id')

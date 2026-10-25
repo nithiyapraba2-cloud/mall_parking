@@ -94,9 +94,13 @@ export class ParkingTransactionsService {
       hourlyRate,
     };
   }
-
-  findAll() {
-    return `This action returns all parkingTransactions`;
+  findAll(status?: TransactionStatus) {
+    return this.transactionRepo.find({
+      where: status ? { status } : {},
+      relations: { vehicle: { vehicleType: true } },
+      order: { entryTime: 'DESC' },
+      take: 100, // safety limit until we add real pagination
+    });
   }
 
   async findOne(id: number) {
