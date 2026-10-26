@@ -5,9 +5,10 @@ import type { ParkingTransaction, VehicleType } from "../types";
 
 interface Props {
   types: VehicleType[];
+  onCheckedIn: () => void; // NEW
 }
 
-function CheckInForm({ types }: Props) {
+function CheckInForm({ types, onCheckedIn }: Props) {
   const [plateNumber, setPlateNumber] = useState("");
   const [vehicleTypeId, setVehicleTypeId] = useState("");
   const [message, setMessage] = useState("");
@@ -32,6 +33,7 @@ function CheckInForm({ types }: Props) {
       setMessage(`Checked in. Ticket #${tx.id} at ${time}`);
       setPlateNumber("");
       setVehicleTypeId("");
+      onCheckedIn(); // NEW: tell App to refresh the list
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -56,6 +58,7 @@ function CheckInForm({ types }: Props) {
           onChange={(e) => setPlateNumber(e.target.value)}
           placeholder="TN 01 AB 1234"
           required
+          maxLength={15}
           className="w-full border border-gray-300 rounded px-3 py-2 uppercase"
         />
       </div>

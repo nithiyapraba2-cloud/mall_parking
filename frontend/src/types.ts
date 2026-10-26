@@ -6,9 +6,18 @@ export interface VehicleType {
   createdAt: string;
 }
 
+export interface Vehicle {
+  id: number;
+  plateNumber: string;
+  vehicleTypeId: number;
+  vehicleType?: VehicleType;
+  createdAt: string;
+}
+
 export interface ParkingTransaction {
   id: number;
   vehicleId: number;
+  vehicle?: Vehicle;
   entryTime: string;
   exitTime: string | null;
   amount: number | null;
