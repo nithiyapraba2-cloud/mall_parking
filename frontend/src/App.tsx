@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
 import type { VehicleType } from "./types";
+import CheckInForm from "./components/CheckInForm";
 
 function App() {
   const [types, setTypes] = useState<VehicleType[]>([]);
@@ -18,14 +19,7 @@ function App() {
 
       {error && <p className="text-red-600 mb-4">{error}</p>}
 
-      <h2 className="text-xl font-semibold mb-2">Vehicle types</h2>
-      <ul className="space-y-2">
-        {types.map((t) => (
-          <li key={t.id} className="bg-white rounded-lg shadow p-3">
-            {t.name}: ₹{t.hourlyRate} per hour
-          </li>
-        ))}
-      </ul>
+      <CheckInForm types={types} />
     </div>
   );
 }
