@@ -24,3 +24,8 @@ export interface ParkingTransaction {
   status: "ACTIVE" | "COMPLETED" | "CANCELLED";
   createdAt: string;
 }
+
+export interface CheckoutResult extends ParkingTransaction {
+  billableHours: number;
+  hourlyRate: number;
+}
