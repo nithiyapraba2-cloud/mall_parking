@@ -7,35 +7,44 @@ interface Props {
   types: VehicleType[];
   onCheckedIn: () => void; // NEW
 }
-
+type Status = { type: "success" | "error"; text: string } | null;
+const emptyForm = { plateNumber: "", vehicleTypeId: "" };
 function CheckInForm({ types, onCheckedIn }: Props) {
-  const [plateNumber, setPlateNumber] = useState("");
-  const [vehicleTypeId, setVehicleTypeId] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  // const [plateNumber, setPlateNumber] = useState("");
+  // const [vehicleTypeId, setVehicleTypeId] = useState("");
+  // const [message, setMessage] = useState("");
+  // const [error, setError] = useState("");
+  // const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState(emptyForm);
+  const [status, setStatus] = useState<Status>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setMessage("");
-    setError("");
+    setStatus(null);
     setLoading(true);
 
     try {
       const tx = await api<ParkingTransaction>("/parking-transactions", {
         method: "POST",
         body: JSON.stringify({
-          plateNumber,
-          vehicleTypeId: Number(vehicleTypeId),
+          plateNumber: formData.plateNumber.trim().toUpperCase(),
+          vehicleTypeId: Number(formData.vehicleTypeId),
         }),
       });
       const time = new Date(tx.entryTime).toLocaleTimeString("en-IN");
-      setMessage(`Checked in. Ticket #${tx.id} at ${time}`);
-      setPlateNumber("");
-      setVehicleTypeId("");
+      setStatus({
+        type: "success",
+        text: `Checked in. Ticket #${tx.id} at ${time}`,
+      });
+      setFormData(emptyForm);
       onCheckedIn(); // NEW: tell App to refresh the list
     } catch (err) {
-      setError((err as Error).message);
+      setStatus({
+        type: "error",
+        text: err instanceof Error ? err.message : "Check-in failed",
+      });
     } finally {
       setLoading(false);
     }
@@ -54,10 +63,13 @@ function CheckInForm({ types, onCheckedIn }: Props) {
         </label>
         <input
           id="plate"
-          value={plateNumber}
-          onChange={(e) => setPlateNumber(e.target.value)}
+          value={formData.plateNumber}
+          onChange={(e) =>
+            setFormData({ ...formData, plateNumber: e.target.value })
+          }
           placeholder="TN 01 AB 1234"
           required
+          disabled={loading}
           maxLength={15}
           className="w-full border border-gray-300 rounded px-3 py-2 uppercase"
         />
@@ -69,8 +81,12 @@ function CheckInForm({ types, onCheckedIn }: Props) {
         </label>
         <select
           id="type"
-          value={vehicleTypeId}
-          onChange={(e) => setVehicleTypeId(e.target.value)}
+          value={formData.vehicleTypeId}
+          onChange={(e) => {
+            setFormData({ ...formData, vehicleTypeId: e.target.value });
+            setStatus(null);
+          }}
+          disabled={loading}
           required
           className="w-full border border-gray-300 rounded px-3 py-2"
         >
@@ -90,9 +106,15 @@ function CheckInForm({ types, onCheckedIn }: Props) {
       >
         {loading ? "Checking in..." : "Check in"}
       </button>
-
-      {message && <p className="text-green-700">{message}</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      {status && (
+        <p
+          className={
+            status.type === "success" ? "text-green-700" : "text-red-600"
+          }
+        >
+          {status.text}
+        </p>
+      )}
     </form>
   );
 }
